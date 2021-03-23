@@ -24,7 +24,9 @@ export class AppComponent {
   inputForm = new FormGroup({
     me: new FormControl(''),
     dp: new FormControl(''),
-    nn: new FormControl('')
+    nn: new FormControl(''),
+    pm: new FormControl(''),
+    pd: new FormControl('')
     });
   sequenceRand: number[];
   currentNumber: number;
@@ -109,6 +111,33 @@ export class AppComponent {
     console.log(this.interMe1);
     this.numbrs += '<p>Доверительный интервал при известной дисперсии: </p> (' + this.interMe1[0] + '; ' + this.interMe1[1];
     this.numbrs += '<p>Доверительный интервал при неизвестной дисперсии: </p> (' + this.interMe2[0] + '; ' + this.interMe2[1];
+    const z1 = Math.abs((sred - (this.inputForm.get('pm').value as number))
+      / (Math.pow((this.inputForm.get('dp').value as number), 0.5) / Math.pow((this.inputForm.get('nn').value as number), 0.5)));
+    console.log('Зет ' + z1);
+    if (z1 > 1.645) {
+      this.numbrs += '<p>При известной дисперсии H0 о мат. ож. Отвергается</p>';
+    }
+    else {
+      this.numbrs += '<p>При известной дисперсии H0 о мат. ож. Принимается</p>';
+    }
+    const z2 = Math.abs((sred - (this.inputForm.get('pm').value as number))
+      / (Math.pow(disp, 0.5) / Math.pow((this.inputForm.get('nn').value as number), 0.5)));
+    console.log('Зет ' + z2);
+    if (z1 > 1.697) {
+      this.numbrs += '<p>При неизвестной дисперсии H0 о мат. ож. Отвергается</p>';
+    }
+    else {
+      this.numbrs += '<p>При неизвестной дисперсии H0 о мат. ож. Принимается</p>';
+    }
+    const z3 = (this.inputForm.get('nn').value as number) * disp / (this.inputForm.get('pd').value as number);
+    console.log('Зет ' + z3);
+
+    if (z3 < 77.93 || z3 > 124.3) {
+      this.numbrs += '<p> H0 о дисперсии Отвергается</p>';
+    }
+    else {
+      this.numbrs += '<p>H0 о дисперсии Принимается</p>';
+    }
     return false;
   }
   getSequence(num: number, matexp: number, disp: number): number[] {
