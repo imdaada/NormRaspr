@@ -20,6 +20,20 @@
     Предполгаемое дисперсия
     <input formControlName="pd" type="text">
   </label>
+  <br>
+  <p>Для второй выборки: </p>
+  <label>
+    Математическое ожидание:
+    <input formControlName="me2" type="text">
+  </label>
+  <label>
+    Дисперсия:
+    <input formControlName="dp2" type="text">
+  </label>
+  <label>
+    Колличество N:
+    <input formControlName="nn2" type="text">
+  </label>
   <button (click)="submit()" type="submit">Submit</button>
 </ng-form>
 <div [innerHTML]="numbrs"></div>

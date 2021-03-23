@@ -60,7 +60,10 @@ class AppComponent {
             dp: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](''),
             nn: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](''),
             pm: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](''),
-            pd: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('')
+            pd: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](''),
+            me2: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](''),
+            dp2: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](''),
+            nn2: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('')
         });
         this.numbrs = '';
         this.type = 'LineChart';
@@ -149,7 +152,7 @@ class AppComponent {
         const z2 = Math.abs((sred - this.inputForm.get('pm').value)
             / (Math.pow(disp, 0.5) / Math.pow(this.inputForm.get('nn').value, 0.5)));
         console.log('Зет ' + z2);
-        if (z1 > 1.697) {
+        if (z2 > 1.697) {
             this.numbrs += '<p>При неизвестной дисперсии H0 о мат. ож. Отвергается</p>';
         }
         else {
@@ -162,6 +165,75 @@ class AppComponent {
         }
         else {
             this.numbrs += '<p>H0 о дисперсии Принимается</p>';
+        }
+        this.getSequence2(this.inputForm.get('nn2').value, this.inputForm.get('me2').value, this.inputForm.get('dp2').value);
+        console.log(this.sequenceRand2);
+        this.sequenceRand2.sort((a, b) => a - b);
+        let sum2 = 0;
+        this.sequenceRand2.forEach((value => sum2 += Number(value)));
+        console.log(sum2);
+        const sred2 = sum2 / this.sequenceRand2.length;
+        sum2 = 0;
+        this.sequenceRand2.forEach((value => sum2 += (Number(value) - Number(sred2)) * (Number(value) - Number(sred2))));
+        console.log(sum2);
+        const disp2 = sum2 / this.sequenceRand2.length;
+        this.numbrs += '<p>Выборочное среднее для 2 выборки: </p>';
+        this.numbrs += sred2;
+        this.numbrs += '<p>Выборочная дисперсия для 2 выборки: </p>';
+        this.numbrs += disp2;
+        const z4 = Math.abs(sred - sred2) / Math.pow((this.inputForm.get('dp').value
+            / this.inputForm.get('nn').value + this.inputForm.get('dp2').value
+            / this.inputForm.get('nn2').value), 0.5);
+        console.log('Зет ' + z4);
+        if (z4 > 1.645) {
+            this.numbrs += '<p>При известной дисперсии H0 о равенстве мат. ож. Отвергается</p>';
+        }
+        else {
+            this.numbrs += '<p>При известной дисперсии H0 о равенстве мат. ож. Принимается</p>';
+        }
+        const nv = this.inputForm.get('nn').value;
+        const mv = this.inputForm.get('nn2').value;
+        const dispsr = ((nv - 1) * disp + (mv - 1) * disp2) / (nv + mv - 2);
+        const z5 = (Math.abs(sred - sred2) / Math.pow(dispsr, 0.5)) * Math.pow((mv * nv) / (mv + nv), 0.5);
+        console.log('Зет ' + z5);
+        console.log((Math.abs(sred - sred2) / dispsr));
+        if (z5 > 1.697) {
+            this.numbrs += '<p>При неизвестной дисперсии H0 о равенстве мат. ож. Отвергается</p>';
+        }
+        else {
+            this.numbrs += '<p>При неизвестной дисперсии H0 о равенстве мат. ож. Принимается</p>';
+        }
+        const minter = Math.round(1 + 3.22 * Math.log10(nv));
+        let minvalue = this.sequenceRand[0];
+        const maxvalue = this.sequenceRand[this.sequenceRand.length - 1];
+        const diffvalue = (maxvalue - minvalue) / minter;
+        let sig = 0;
+        for (let i = 0; i < minter; i++) {
+            minvalue += diffvalue;
+            let ni = 0;
+            this.sequenceRand.forEach((a) => {
+                if (a <= minvalue) {
+                    ni += 1;
+                }
+            });
+            const pi = ni / nv;
+            sig += Math.pow(ni - nv * pi, 2) / (nv * pi);
+        }
+        sig = Math.abs(sig);
+        console.log(sig);
+        if (sig > 77.93) {
+            this.numbrs += '<p> H0 критерый Пирсона Отвергается</p>';
+        }
+        else {
+            this.numbrs += '<p>H0 критерий Пирсона Принимается</p>';
+        }
+        const da = 1 / (2 * nv) * Math.log(2 / 0.95);
+        console.log(da);
+        if (da < 0) {
+            this.numbrs += '<p> H0 критерый Колмогорова-Смирнова Отвергается</p>';
+        }
+        else {
+            this.numbrs += '<p>H0 критерий Колмогорова-Смирнова Принимается</p>';
         }
         return false;
     }
@@ -180,6 +252,21 @@ class AppComponent {
         }
         return this.sequenceRand;
     }
+    getSequence2(num, matexp, disp) {
+        this.sequenceRand2 = [];
+        console.log(num, matexp, disp);
+        for (let i = 0; i < num; i++) {
+            this.currentNumber = 0;
+            for (let j = 0; j < 12; j++) {
+                this.currentNumber += Math.random();
+            }
+            this.currentNumber -= 6;
+            this.currentNumber *= Math.pow(disp, 0.5);
+            this.currentNumber += Number(matexp);
+            this.sequenceRand2.push(this.currentNumber);
+        }
+        return this.sequenceRand2;
+    }
     makeFunction() {
         let fValue = 0;
         let prevValue = 0;
@@ -197,7 +284,7 @@ class AppComponent {
     }
 }
 AppComponent.ɵfac = function AppComponent_Factory(t) { return new (t || AppComponent)(); };
-AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["app-root"]], decls: 26, vars: 14, consts: [[3, "formGroup", "ngSubmit"], ["formControlName", "me", "type", "text"], ["formControlName", "dp", "type", "text"], ["formControlName", "nn", "type", "text"], ["formControlName", "pm", "type", "text"], ["formControlName", "pd", "type", "text"], ["type", "submit", 3, "click"], [3, "innerHTML"], [3, "title", "type", "data", "options", "width", "height"], ["chart", ""], ["chart1", ""]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
+AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["app-root"]], decls: 38, vars: 14, consts: [[3, "formGroup", "ngSubmit"], ["formControlName", "me", "type", "text"], ["formControlName", "dp", "type", "text"], ["formControlName", "nn", "type", "text"], ["formControlName", "pm", "type", "text"], ["formControlName", "pd", "type", "text"], ["formControlName", "me2", "type", "text"], ["formControlName", "dp2", "type", "text"], ["formControlName", "nn2", "type", "text"], ["type", "submit", 3, "click"], [3, "innerHTML"], [3, "title", "type", "data", "options", "width", "height"], ["chart", ""], ["chart1", ""]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "ng-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("ngSubmit", function AppComponent_Template_ng_form_ngSubmit_0_listener() { return ctx.submit(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "label");
@@ -221,20 +308,36 @@ AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineCompo
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](15, " \u041F\u0440\u0435\u0434\u043F\u043E\u043B\u0433\u0430\u0435\u043C\u043E\u0435 \u0434\u0438\u0441\u043F\u0435\u0440\u0441\u0438\u044F ");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](16, "input", 5);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](17, "button", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function AppComponent_Template_button_click_17_listener() { return ctx.submit(); });
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](18, "Submit");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](17, "br");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](18, "p");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](19, "\u0414\u043B\u044F \u0432\u0442\u043E\u0440\u043E\u0439 \u0432\u044B\u0431\u043E\u0440\u043A\u0438: ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](20, "label");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](21, " \u041C\u0430\u0442\u0435\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0435 \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u0435: ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](22, "input", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](23, "label");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](24, " \u0414\u0438\u0441\u043F\u0435\u0440\u0441\u0438\u044F: ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](25, "input", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](26, "label");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](27, " \u041A\u043E\u043B\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E N: ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](28, "input", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](29, "button", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function AppComponent_Template_button_click_29_listener() { return ctx.submit(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](30, "Submit");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](19, "div", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](20, "div");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](21, "\u0413\u0440\u0430\u0444\u0438\u043A\u0438: ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](31, "div", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](32, "div");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](33, "\u0413\u0440\u0430\u0444\u0438\u043A\u0438: ");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](22, "google-chart", 8, 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](24, "google-chart", 8, 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](34, "google-chart", 11, 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](36, "google-chart", 11, 13);
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formGroup", ctx.inputForm);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](31);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("innerHTML", ctx.numbrs, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsanitizeHtml"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("title", ctx.title)("type", ctx.type)("data", ctx.hData)("options", ctx.options)("width", ctx.width)("height", ctx.height);
