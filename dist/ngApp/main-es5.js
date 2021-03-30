@@ -179,9 +179,12 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           this.sequenceRand.sort(function (a, b) {
             return a - b;
           });
-          this.sequenceRand.forEach(function (num) {
-            _this.numbrs += num + '<br>';
-          });
+          /* this.sequenceRand.forEach(
+             (num: number) => {
+               this.numbrs += num + '<br>';
+             }
+           ); */
+
           this.numbrs += '<p>Медиана: </p>';
 
           if (!(this.sequenceRand.length % 2)) {
@@ -365,6 +368,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
           console.log(this.getFbyX(0.4900209834904239));
           console.log(this.tableNorm[26][4]);
+          this.numbrs += '<p>Мера расхождения ' + sig + ' критерий X2 18.5' + ' D emp ' + dmin + ' D кр ' + da;
           return false;
         }
       }, {

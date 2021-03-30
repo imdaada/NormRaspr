@@ -173,9 +173,11 @@ class AppComponent {
         this.getSequence(this.inputForm.get('nn').value, this.inputForm.get('me').value, this.inputForm.get('dp').value);
         console.log(this.sequenceRand);
         this.sequenceRand.sort((a, b) => a - b);
-        this.sequenceRand.forEach((num) => {
-            this.numbrs += num + '<br>';
-        });
+        /* this.sequenceRand.forEach(
+           (num: number) => {
+             this.numbrs += num + '<br>';
+           }
+         ); */
         this.numbrs += '<p>Медиана: </p>';
         if (!(this.sequenceRand.length % 2)) {
             const med = (this.add(this.sequenceRand[this.sequenceRand.length / 2 - 1], this.sequenceRand[this.sequenceRand.length / 2])) / 2;
@@ -340,6 +342,7 @@ class AppComponent {
         }
         console.log(this.getFbyX(0.4900209834904239));
         console.log(this.tableNorm[26][4]);
+        this.numbrs += '<p>Мера расхождения ' + sig + ' критерий X2 18.5' + ' D emp ' + dmin + ' D кр ' + da;
         return false;
     }
     getSequence(num, matexp, disp) {
